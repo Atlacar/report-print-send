@@ -1,6 +1,7 @@
 # Copyright 2016 LasLabs Inc.
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
+from odoo.exceptions import AccessError
 from odoo.tests import common
 
 
@@ -22,6 +23,20 @@ class TestResUsers(common.TransactionCase):
         """It should still contain other valid keys"""
         self.user_vals["printing_action"] = "server"
         self.assertTrue(self.new_record())
+
+    def test_user_can_write_own_printing_preferences(self):
+        """A plain internal user may set their own printing preferences"""
+        user = self.new_record()
+        printer = self.env["printing.printer"].create(
+            {"name": "Printer", "system_name": "Sys Name", "uri": "URI"}
+        )
+        user.with_user(user).write(
+            {"printing_action": "server", "printing_printer_id": printer.id}
+        )
+        self.assertEqual(user.printing_action, "server")
+        self.assertEqual(user.printing_printer_id, printer)
+        with self.assertRaises(AccessError):
+            user.with_user(user).write({"login": "other_login"})
 
     def test_onchange_printer_tray_id_empty(self):
         user = self.env["res.users"].new(

@@ -20,10 +20,13 @@ class ResUsers(models.Model):
         ]
 
     printing_action = fields.Selection(
-        selection=lambda self: self._user_available_action_types
+        selection=lambda self: self._user_available_action_types,
+        user_writeable=True,
     )
     printing_printer_id = fields.Many2one(
-        comodel_name="printing.printer", string="Default Printer"
+        comodel_name="printing.printer",
+        string="Default Printer",
+        user_writeable=True,
     )
 
     @api.constrains("printing_action")
@@ -31,17 +34,6 @@ class ResUsers(models.Model):
         for rec in self:
             if rec.printing_action == "user_default":
                 raise ValueError("user_default should not be available")
-
-    @property
-    def SELF_READABLE_FIELDS(self):
-        return super().SELF_READABLE_FIELDS + ["printing_action", "printing_printer_id"]
-
-    @property
-    def SELF_WRITEABLE_FIELDS(self):
-        return super().SELF_WRITEABLE_FIELDS + [
-            "printing_action",
-            "printing_printer_id",
-        ]
 
     printer_input_tray_id = fields.Many2one(
         comodel_name="printing.tray.input",
