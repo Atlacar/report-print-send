@@ -1,6 +1,7 @@
 import {_t} from "@web/core/l10n/translation";
 import {markup} from "@odoo/owl";
 import {registry} from "@web/core/registry";
+import {user} from "@web/core/user";
 
 async function cupsDispatcher(action, env) {
     const orm = env.services.orm;
@@ -56,7 +57,7 @@ async function cupsDispatcher(action, env) {
                                 force_print_to_client: true,
                                 must_skip_send_to_printer: true,
                             };
-                            env.services.user.updateContext(context);
+                            user.updateContext(context);
                             await env.services.action.doAction(
                                 {type: "ir.actions.report", ...action},
                                 {
