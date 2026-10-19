@@ -1,9 +1,13 @@
 from unittest import mock
 
 from odoo import fields
-from odoo.tests.common import TransactionCase
+from odoo.tests.common import TransactionCase, tagged
 
 
+# Odoo 20 runs untagged tests post_install, when a backend such as
+# base_report_to_printer_cups may already require its own job fields: these
+# backend-agnostic job tests run at install time, as in 19.
+@tagged("at_install", "-post_install")
 class TestPrintingJob(TransactionCase):
     def setUp(self):
         super().setUp()

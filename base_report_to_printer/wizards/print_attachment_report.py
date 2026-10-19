@@ -1,7 +1,5 @@
 # Copyright 2020 Camptocamp SA
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl)
-import base64
-
 from odoo import fields, models
 
 
@@ -26,12 +24,12 @@ class PrintAttachment(models.TransientModel):
         self.ensure_one()
         errors = []
         for att_line in self.attachment_line_ids:
-            data = att_line.attachment_id.datas
+            data = att_line.attachment_id.raw
             title = att_line.attachment_id.name
             if not data:
                 errors.append(att_line)
                 continue
-            content = base64.b64decode(data)
+            content = data.content
             content_format = att_line.get_format()
             self.printer_id.print_document(
                 None,

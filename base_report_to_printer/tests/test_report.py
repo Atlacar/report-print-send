@@ -183,10 +183,9 @@ class TestReport(common.HttpCase):
 
     def test_print_document_string(self):
         """Test string encoding"""
-        with mock.patch(
-            "odoo.addons.base_report_to_printer.models."
-            "printing_printer.PrintingPrinter."
-            "print_file"
-        ) as print_file:
-            self.new_printer().print_document("", "test")
+        printer = self.new_printer()
+        # patch the registry class: a backend module (e.g. CUPS) overrides
+        # print_file below the base implementation
+        with mock.patch.object(type(printer), "print_file") as print_file:
+            printer.print_document("", "test")
             print_file.assert_called_once()

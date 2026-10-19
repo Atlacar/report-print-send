@@ -220,7 +220,7 @@ class PrintingServer(models.Model):
                     "active": True,
                     "job_media_progress": job_data.get("job-media-progress", 0),
                     "job_state": mapping.get(job_data.get("job-state"), "unknown"),
-                    "job_state_reason": job_data.get("job-state-reasons", ""),
+                    "job_state_reason": job_data.get("job-state-reasons") or False,
                     "time_at_creation": datetime.fromtimestamp(
                         job_data.get("time-at-creation", 0)
                     ),
